@@ -360,13 +360,16 @@ class Qwen2ModelRunInference:
                 out_ids[len(in_ids) :]
                 for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
             ]
+
+            # Result returned as array of length == 1
+            # so we take only the first element, therefore [0]
             result = processor.batch_decode(
                 generated_ids_trimmed, 
                 skip_special_tokens=True, 
                 clean_up_tokenization_spaces=False,
                 temperature=temperature,
-            )
-        
+            )[0]
+
             if not keep_model_loaded:
                 model.to(offload_device)
                 mm.soft_empty_cache()
